@@ -79,7 +79,7 @@ ssh -i ~/.ssh/my-key.pem ubuntu@YOUR-IP-ADDRESS
 ## Step 5: Download IB Gateway
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/ib-gateway-docker.git
+git clone https://github.com/guilleruizval/ib-gateway-docker.git
 ```
 
 Go into the folder:
@@ -92,7 +92,13 @@ cd ib-gateway-docker
 
 ## Step 6: Set Up Your IBKR Login
 
-Open the settings file:
+First, create your settings file from the template:
+
+```bash
+cp .env-dist .env
+```
+
+Then open it:
 
 ```bash
 nano .env
@@ -149,7 +155,7 @@ cd ~
 Download the bot:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/ibkr-bot.git
+git clone https://github.com/guilleruizval/ibkr-bot.git
 ```
 
 Go into the folder:
