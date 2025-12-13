@@ -29,24 +29,24 @@ pub fn spy() -> Contract {
 }
 
 // ETF to buy in prod
-// pub fn asx() -> Contract {
-//     Contract {
-//         contract_id: 60009472,
-//         exchange: Exchange("SMART".to_string()),
-//         currency: Currency("AUD".to_string()),
-//         ..Default::default()
-//     }
-// }
-
-// NOTE: This fetches BHP for now
 pub fn asx() -> Contract {
     Contract {
-        contract_id: 4036812,
+        contract_id: 60009472,
         exchange: Exchange("SMART".to_string()),
         currency: Currency("AUD".to_string()),
         ..Default::default()
     }
 }
+
+// NOTE: This fetches BHP for now
+// pub fn asx() -> Contract {
+//     Contract {
+//         contract_id: 4036812,
+//         exchange: Exchange("SMART".to_string()),
+//         currency: Currency("AUD".to_string()),
+//         ..Default::default()
+//     }
+// }
 
 pub async fn get_balance(client: &Client, tag: &str, currency: &str) -> Result<f64> {
     let mut sub = client
