@@ -55,7 +55,8 @@ async fn place_buy_order(client: &Client, contract: &Contract, amount: f64) -> R
         .ok_or(eyre!("no candles returned"))?
         .close;
 
-    let max_shares = (amount / last_close).floor();
+    let max_aud = amount * 0.99;
+    let max_shares = (max_aud / last_close).floor();
 
     let order = order_builder::market_order(Action::Buy, max_shares);
     let order_id = client.next_order_id();
