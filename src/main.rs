@@ -58,6 +58,8 @@ async fn place_buy_order(client: &Client, contract: &Contract, amount: f64) -> R
     let max_aud = amount * 0.99;
     let max_shares = (max_aud / last_close).floor();
 
+    tracing::info!("placing buy order for {max_shares} shares");
+
     let order = order_builder::market_order(Action::Buy, max_shares);
     let order_id = client.next_order_id();
 

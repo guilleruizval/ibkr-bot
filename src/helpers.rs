@@ -98,7 +98,7 @@ pub async fn await_order_filled(mut sub: Subscription<PlaceOrder>) -> Result<()>
     while let Some(res) = sub.next().await {
         match res {
             Ok(PlaceOrder::OrderStatus(status)) => match status.status.as_str() {
-                "Inactive" => tracing::info!("Order Inactive"),
+                "Inactive" => return Err(eyre!("Order Inactive: {status:#?}")),
                 "PreSubmitted" => tracing::info!("Order Pre-Submitted"),
                 "Submitted" => tracing::info!("Order Submitted"),
                 "Filled" => {
