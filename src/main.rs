@@ -116,7 +116,7 @@ async fn place_sell_order(client: &Client, contract: &Contract, amount: f64) -> 
 #[tokio::main]
 async fn main() -> Result<()> {
     let _ = tracing_subscriber::fmt()
-        .with_env_filter(EnvFilter::new("ibkr_bot=info,ibapi=error"))
+        .with_env_filter(EnvFilter::new("ibkr_bot=info,ibapi=info"))
         .try_init();
 
     let spy = spy();
