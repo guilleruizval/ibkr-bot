@@ -55,7 +55,7 @@ async fn place_buy_order(client: &Client, contract: &Contract, amount: f64) -> R
         .ok_or(eyre!("no candles returned"))?
         .close;
 
-    let max_aud = amount * 0.99;
+    let max_aud = amount * 0.95;
     let max_shares = (max_aud / last_close).floor();
 
     tracing::info!("placing buy order for {max_shares} shares");
