@@ -102,7 +102,7 @@ pub async fn await_order_filled(mut sub: Subscription<PlaceOrder>) -> Result<()>
                 "PreSubmitted" => tracing::info!("Order Pre-Submitted"),
                 "Submitted" => tracing::info!("Order Submitted"),
                 "Filled" => {
-                    tracing::info!("Order Filled");
+                    tracing::info!("Order Filled: {status:#?}");
                     return Ok(());
                 }
                 "ApiCancelled" | "Cancelled" => {
