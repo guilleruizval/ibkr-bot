@@ -28,14 +28,6 @@ async fn place_buy_order(client: &Client, contract: &Contract, amount: f64) -> R
         return Err(eyre!("cannot buy negative AUD worth of shares"));
     }
 
-    // Ensure we have sufficient balance for the trade
-    let aud_balance = get_balance(client, "CashBalance", "AUD").await?;
-    if aud_balance < amount {
-        return Err(eyre!(
-            "account balance {aud_balance} less than buy amount {amount}"
-        ));
-    }
-
     let historical_data = client
         .historical_data(
             contract,
@@ -68,21 +60,15 @@ async fn place_buy_order(client: &Client, contract: &Contract, amount: f64) -> R
         .await
         .map_err(|e| eyre!("failed to place order: {e}"))?;
 
-    await_order_filled(sub).await?;
+    let status = await_order_filled(sub).await?;
+    let aud_spent = status.average_fill_price * status.filled;
 
-    let aud_balance_after = get_balance(client, "CashBalance", "AUD").await?;
-    let change = aud_balance - aud_balance_after;
-
-    if !change.is_sign_positive() {
-        return Err(eyre!("aud spent is negative: {change}"));
-    }
-
-    Ok((change, max_shares))
+    Ok((aud_spent, status.filled))
 }
 
 async fn place_sell_order(client: &Client, contract: &Contract, amount: f64) -> Result<f64> {
     if !amount.is_sign_positive() {
-        return Err(eyre!("cannot buy a negative amount of shares ({amount})"));
+        return Err(eyre!("cannot sell a negative amount of shares ({amount})"));
     }
 
     let asx_balance = get_position(client, contract.contract_id).await?;
@@ -91,7 +77,6 @@ async fn place_sell_order(client: &Client, contract: &Contract, amount: f64) -> 
             "asx shares {asx_balance} less than sell amount {amount}"
         ));
     }
-    let aud_balance_before = get_balance(client, "CashBalance", "AUD").await?;
 
     let order = order_builder::market_order(Action::Sell, amount);
     let order_id = client.next_order_id();
@@ -101,16 +86,10 @@ async fn place_sell_order(client: &Client, contract: &Contract, amount: f64) -> 
         .await
         .map_err(|e| eyre!("failed to place order: {e}"))?;
 
-    await_order_filled(sub).await?;
+    let status = await_order_filled(sub).await?;
+    let aud_received = status.average_fill_price * status.filled;
 
-    let aud_balance_after = get_balance(client, "CashBalance", "AUD").await?;
-    let change = aud_balance_after - aud_balance_before;
-
-    if !change.is_sign_positive() {
-        return Err(eyre!("aud received is negative: {change}"));
-    }
-
-    Ok(change)
+    Ok(aud_received)
 }
 
 #[tokio::main]

@@ -3,7 +3,7 @@ use ibapi::{
     Client,
     accounts::types::AccountGroup,
     client::Subscription,
-    orders::PlaceOrder,
+    orders::{OrderStatus, PlaceOrder},
     prelude::{AccountSummaryResult, Contract, Currency, Exchange, PositionUpdate},
 };
 use tracing::info;
@@ -94,7 +94,7 @@ pub async fn get_position(client: &Client, contract_id: i32) -> Result<f64> {
     Err(eyre!("Position stream returned None"))
 }
 
-pub async fn await_order_filled(mut sub: Subscription<PlaceOrder>) -> Result<()> {
+pub async fn await_order_filled(mut sub: Subscription<PlaceOrder>) -> Result<OrderStatus> {
     while let Some(res) = sub.next().await {
         match res {
             Ok(PlaceOrder::OrderStatus(status)) => match status.status.as_str() {
@@ -103,7 +103,7 @@ pub async fn await_order_filled(mut sub: Subscription<PlaceOrder>) -> Result<()>
                 "Submitted" => tracing::info!("Order Submitted"),
                 "Filled" => {
                     tracing::info!("Order Filled: {status:#?}");
-                    return Ok(());
+                    return Ok(status);
                 }
                 "ApiCancelled" | "Cancelled" => {
                     return Err(eyre!("Order Cancelled: {status:#?}"));
