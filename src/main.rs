@@ -186,7 +186,7 @@ async fn main() -> Result<()> {
             );
 
             // Calculate sleep
-            let order_placement_time = next_open_utc + Duration::minutes(1);
+            let order_placement_time = next_open_utc + Duration::seconds(30);
             let utc_duration = order_placement_time.signed_duration_since(Utc::now());
             let sleep_duration = if utc_duration.num_seconds() > 0 {
                 utc_duration.to_std()?
